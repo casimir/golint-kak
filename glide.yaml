@@ -1,0 +1,3 @@
+package: github.com/casimir/golint-kak
+import:
+- package: github.com/golang/lint

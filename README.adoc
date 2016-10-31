@@ -1,0 +1,32 @@
+= A KISS linter for http://kakoune.org[Kakoune]
+
+== Installation
+
+Like many tools made in Go `golint-kak` is fairly easy to get.
+----
+go get github.com/casimir/golint-kak
+----
+
+Put a hook for go filetype in your _kakrc_.
+----
+hook window WinSetOption filetype=go %{
+    set window lintercmd golint-kak
+}
+----
+
+Alternatively you can use the awesome _syntastic_ script from
+https://github.com/lenormf/kakoune-extra/blob/master/syntastic.asciidoc[lenormf/kakoune-extra].
+
+== Concept
+
+`golint-kak` wraps the official Go linters (like in "provided by Google") and
+format the output to the linter format of
+https://github.com/mawww/kakoune/blob/master/rc/base/lint.kak[lint.kak].
+
+Wrapped linters are the following.
+https://github.com/golang/lint[golint]::
+    This linter is intended to check coding style.
+https://github.com/golang/go/tree/master/src/cmd/vet[go vet]::
+    This linter check code correctness.
+
+*TODO* figure out how to handle licenses

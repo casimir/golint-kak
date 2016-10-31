@@ -1,0 +1,10 @@
+hash: 40c6b13f22ef39e8ad83cc4557132a1591e0f7737dca7ad7c9a5d6da765b3398
+updated: 2016-11-01T00:25:58.589637589+01:00
+imports:
+- name: github.com/golang/lint
+  version: 3390df4df2787994aea98de825b964ac7944b817
+- name: golang.org/x/tools
+  version: 1529f889eb4b594d1f047f2fb8d5b3cc85c8f006
+  subpackages:
+  - go/gcimporter15
+testImports: []
