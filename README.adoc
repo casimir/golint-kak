@@ -24,6 +24,7 @@ format the output to the linter format of
 https://github.com/mawww/kakoune/blob/master/rc/base/lint.kak[lint.kak].
 
 Wrapped linters are the following.
+
 https://github.com/golang/lint[golint]::
     This linter is intended to check coding style.
 https://github.com/golang/go/tree/master/src/cmd/vet[go vet]::
