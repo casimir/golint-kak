@@ -1,4 +1,4 @@
-= A KISS linter for http://kakoune.org[Kakoune]
+= A Go linter for http://kakoune.org[Kakoune]
 
 == Installation
 
