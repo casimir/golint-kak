@@ -68,14 +68,14 @@ func vetFiles(filenames ...string) {
 			file := parts[0]
 			line := parts[1]
 			message := strings.TrimSpace(parts[2])
-			fmt.Printf("%s:%s:1: error: %s (go vet)\n", file, line, message)
+			fmt.Printf("%s:%s:1: warning: %s (go vet)\n", file, line, message)
 		} else if scanner.Text() != "vet: no files checked" {
 			parts := strings.SplitN(scanner.Text(), ":", 6)
 			file := strings.TrimSpace(parts[2])
 			line := parts[3]
 			column := parts[4]
 			message := strings.TrimSpace(parts[5])
-			fmt.Printf("%s:%s:%s: warning: %s\n", file, line, column, message)
+			fmt.Printf("%s:%s:%s: error: %s\n", file, line, column, message)
 		}
 	}
 	if err := scanner.Err(); err != nil {
