@@ -48,7 +48,7 @@ func lintFiles(filenames ...string) {
 	}
 	for _, p := range ps {
 		if p.Confidence >= *minConfidence {
-			fmt.Printf("%v: error: %s (golint)\n", p.Position, p.Text)
+			fmt.Printf("%v: warning: %s (golint)\n", p.Position, p.Text)
 		}
 	}
 }
@@ -75,7 +75,7 @@ func vetFiles(filenames ...string) {
 			line := parts[3]
 			column := parts[4]
 			message := strings.TrimSpace(parts[5])
-			fmt.Printf("%s:%s:%s: error: %s\n", file, line, column, message)
+			fmt.Printf("%s:%s:%s: warning: %s\n", file, line, column, message)
 		}
 	}
 	if err := scanner.Err(); err != nil {
