@@ -25,13 +25,19 @@ func main() {
 		flag.PrintDefaults()
 	}
 	flag.Parse()
-	lintFiles(flag.Args()...)
-	vetFiles(flag.Args()...)
+	files, err := newFileProvider(flag.Args()...)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create temporary directory: %s", err)
+		os.Exit(1)
+	}
+	defer files.Clean()
+	lintFiles(files)
+	vetFiles(files)
 }
 
-func lintFiles(filenames ...string) {
+func lintFiles(provider *fileProvider) {
 	files := make(map[string][]byte)
-	for _, filename := range filenames {
+	for _, filename := range provider.Filenames {
 		src, err := ioutil.ReadFile(filename)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
@@ -48,17 +54,20 @@ func lintFiles(filenames ...string) {
 	}
 	for _, p := range ps {
 		if p.Confidence >= *minConfidence {
-			fmt.Printf("%v: warning: %s (golint)\n", p.Position, p.Text)
+			file := provider.Filename(p.Position.Filename)
+			line := p.Position.Line
+			column := p.Position.Column
+			fmt.Printf("%s:%d:%d: warning: %s (golint)\n", file, line, column, p.Text)
 		}
 	}
 }
 
-func vetFiles(filenames ...string) {
-	if len(filenames) == 0 {
+func vetFiles(provider *fileProvider) {
+	if len(provider.Filenames) == 0 {
 		return
 	}
 	args := []string{"tool", "vet"}
-	c := exec.Command("go", append(args, filenames...)...)
+	c := exec.Command("go", append(args, provider.Filenames...)...)
 	// go vet returns 1 when there is a match so we ignore status here
 	out, _ := c.CombinedOutput()
 	scanner := bufio.NewScanner(bytes.NewReader(out))
@@ -68,14 +77,14 @@ func vetFiles(filenames ...string) {
 			file := parts[0]
 			line := parts[1]
 			message := strings.TrimSpace(parts[2])
-			fmt.Printf("%s:%s:1: warning: %s (go vet)\n", file, line, message)
+			fmt.Printf("%s:%s:1: warning: %s (go vet)\n", provider.Filename(file), line, message)
 		} else if scanner.Text() != "vet: no files checked" {
 			parts := strings.SplitN(scanner.Text(), ":", 6)
 			file := strings.TrimSpace(parts[2])
 			line := parts[3]
 			column := parts[4]
 			message := strings.TrimSpace(parts[5])
-			fmt.Printf("%s:%s:%s: error: %s\n", file, line, column, message)
+			fmt.Printf("%s:%s:%s: error: %s\n", provider.Filename(file), line, column, message)
 		}
 	}
 	if err := scanner.Err(); err != nil {
